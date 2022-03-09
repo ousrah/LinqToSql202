@@ -21,7 +21,21 @@ namespace LinqToSql202
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            var ed = from edi in db.EDITEUR
+                     select new { edi.NOMED, edi.VILLEED, edi.TELED };
 
+            comboBox1.DisplayMember = "nomed";
+            comboBox1.ValueMember = "nomed";
+            comboBox1.DataSource = ed;
+
+            listBox1.DisplayMember = "nomed";
+            listBox1.ValueMember = "nomed";
+            listBox1.DataSource = ed;
+
+
+            textBox1.DataBindings.Add("text", ed, "nomed");
+            textBox2.DataBindings.Add("text", ed, "villeed");
+            textBox3.DataBindings.Add("text", ed, "teled");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -176,6 +190,160 @@ namespace LinqToSql202
         }
 
 
+        private void button13_Click(object sender, EventArgs e)
+        {
 
+
+
+            //liste des editeurs qui ont des ouvrages
+            //31 resultats
+            var ed = (from edi in db.EDITEUR
+                     // join ouv in db.OUVRAGE 
+                     // on edi.NOMED equals ouv.NOMED
+                         where edi.OUVRAGE.Any()
+                      select new { edi.NOMED }).Distinct();
+            label1.Text = ed.Count().ToString();
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+
+
+            //liste de tous les editeurs
+            //35 resulats
+            var ed = (from edi in db.EDITEUR
+                      select new { edi.NOMED }).Distinct();
+
+            label1.Text = ed.Count().ToString();
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+
+
+            ////liste des editeurs qui ont des ouvrages mais en utilisant join
+            //31 resultats
+            var ed = (from edi in db.EDITEUR
+                      join ouv in db.OUVRAGE
+                      on edi.NOMED equals ouv.NOMED
+                      select new { edi.NOMED }).Distinct();
+
+
+            label1.Text = ed.Count().ToString();
+
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+
+
+            //left join
+            var ed = (from edi in db.EDITEUR
+                      join ouv in db.OUVRAGE
+                      on edi.NOMED equals ouv.NOMED into nomJointure
+                     from o in nomJointure.DefaultIfEmpty()
+                      select new { nom = edi.NOMED, titre = o.NOMOUVR }).Distinct();
+            label1.Text = ed.Count().ToString();
+
+
+
+            dataGridView1.DataSource = ed;
+
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+
+
+            //liste des editeur a travers la table ouvrage
+            var ed = (from ouv in db.OUVRAGE
+                      select ouv.EDITEUR).Distinct();
+
+
+            //liste des editeurs directement
+            //var ed = (from edi in db.EDITEUR
+            //          select edi).Distinct();
+
+
+            label1.Text = ed.Count().ToString();
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+
+            //nombre des editeurs par ville
+            var ed = from edi in db.EDITEUR
+                     group edi by edi.VILLEED into G_edi
+                     select new { ville= G_edi.Key, nb = G_edi.Count() }; 
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+
+            //nombre des ouvrages par editeur
+            var ed = from edi in db.EDITEUR
+                     join ouv in db.OUVRAGE
+                     on edi.NOMED equals ouv.NOMED
+                     group edi by edi.NOMED into G_edi
+                     select new {editeur= G_edi.Key, nbouvrages = G_edi.Count() };
+
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+
+            //somme des prix de vente par editeur
+            var ed = from edi in db.EDITEUR
+                     join ouv in db.OUVRAGE on edi.NOMED equals ouv.NOMED
+                     join tar in db.TARIFER on ouv.NUMOUVR equals tar.NUMOUVR
+                     group tar by tar.OUVRAGE.EDITEUR.NOMED into Gtar
+                     select new { Gtar.Key, total = Math.Round((double) Gtar.Sum(c => c.PRIXVENTE),2,MidpointRounding.AwayFromZero) };//expression lambda
+
+
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //nombre des editeurs par ville
+            var ed = from ouv in db.OUVRAGE 
+                join edi in db.EDITEUR on ouv.NOMED equals edi.NOMED
+                join cls in db.CLASSIFICATION on ouv.NUMRUB equals cls.NUMRUB
+                group edi by new { cls.LIBRUB, edi.NOMED } into G_edi
+                select new { theme = G_edi.Key.LIBRUB, editeur=G_edi.Key.NOMED, nb = G_edi.Count() };
+
+
+            dataGridView1.DataSource = ed;
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            EDITEUR ed = new EDITEUR();
+            ed.NOMED = "hamza202";
+            ed.VILLEED = "Tanger";
+            ed.ADRED = "boulevard";
+            ed.TELED = "0654845675421";
+            db.EDITEUR.InsertOnSubmit(ed);
+            db.SubmitChanges();
+        }
     }
 }
