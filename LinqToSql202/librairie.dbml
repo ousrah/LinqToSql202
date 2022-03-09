@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="librairie" Class="librairieDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=.\sqlexpress;Initial Catalog=librairie;Persist Security Info=True;User ID=sa" SettingsObjectName="LinqToSql202.Properties.Settings" SettingsPropertyName="librairieConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.CATALOGUE" Member="CATALOGUE">
+    <Type Name="CATALOGUE">
+      <Column Name="DATEDEB" Type="System.DateTime" DbType="Date NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DATEFIN" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="CATALOGUE_TARIFER" Member="TARIFER" ThisKey="DATEDEB" OtherKey="DATEDEB" Type="TARIFER" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TARIFER" Member="TARIFER">
+    <Type Name="TARIFER">
+      <Column Name="NUMOUVR" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DATEDEB" Type="System.DateTime" DbType="Date NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PRIXVENTE" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Association Name="CATALOGUE_TARIFER" Member="CATALOGUE" ThisKey="DATEDEB" OtherKey="DATEDEB" Type="CATALOGUE" IsForeignKey="true" />
+      <Association Name="OUVRAGE_TARIFER" Member="OUVRAGE" ThisKey="NUMOUVR" OtherKey="NUMOUVR" Type="OUVRAGE" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CLASSIFICATION" Member="CLASSIFICATION">
+    <Type Name="CLASSIFICATION">
+      <Column Name="NUMRUB" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LIBRUB" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CLASSIFICATION_OUVRAGE" Member="OUVRAGE" ThisKey="NUMRUB" OtherKey="NUMRUB" Type="OUVRAGE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DEPOT" Member="DEPOT">
+    <Type Name="DEPOT">
+      <Column Name="NUMDEP" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NOMDEP" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="ADRDEP" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="CPDEP" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="VILLEDEP" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Association Name="DEPOT_STOCKER" Member="STOCKER" ThisKey="NUMDEP" OtherKey="NUMDEP" Type="STOCKER" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ECRIRE" Member="ECRIRE">
+    <Type Name="ECRIRE">
+      <Column Name="NUMOUVR" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NUMECR" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="ECRIVAIN_ECRIRE" Member="ECRIVAIN" ThisKey="NUMECR" OtherKey="NUMECR" Type="ECRIVAIN" IsForeignKey="true" />
+      <Association Name="OUVRAGE_ECRIRE" Member="OUVRAGE" ThisKey="NUMOUVR" OtherKey="NUMOUVR" Type="OUVRAGE" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ECRIVAIN" Member="ECRIVAIN">
+    <Type Name="ECRIVAIN">
+      <Column Name="NUMECR" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PRENOMECR" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="NOMECR" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="PAYSECR" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="LANGUECR" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Association Name="ECRIVAIN_ECRIRE" Member="ECRIRE" ThisKey="NUMECR" OtherKey="NUMECR" Type="ECRIRE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EDITEUR" Member="EDITEUR">
+    <Type Name="EDITEUR">
+      <Column Name="NOMED" Type="System.String" DbType="VarChar(30) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ADRED" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="CPED" Type="System.String" DbType="NVarChar(5)" CanBeNull="true" />
+      <Column Name="VILLEED" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+      <Column Name="TELED" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+      <Association Name="EDITEUR_OUVRAGE" Member="OUVRAGE" ThisKey="NOMED" OtherKey="NOMED" Type="OUVRAGE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OUVRAGE" Member="OUVRAGE">
+    <Type Name="OUVRAGE">
+      <Column Name="NUMOUVR" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NOMOUVR" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="ANNEEPARU" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="NUMRUB" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NOMED" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Association Name="OUVRAGE_TARIFER" Member="TARIFER" ThisKey="NUMOUVR" OtherKey="NUMOUVR" Type="TARIFER" />
+      <Association Name="OUVRAGE_ECRIRE" Member="ECRIRE" ThisKey="NUMOUVR" OtherKey="NUMOUVR" Type="ECRIRE" />
+      <Association Name="OUVRAGE_STOCKER" Member="STOCKER" ThisKey="NUMOUVR" OtherKey="NUMOUVR" Type="STOCKER" />
+      <Association Name="CLASSIFICATION_OUVRAGE" Member="CLASSIFICATION" ThisKey="NUMRUB" OtherKey="NUMRUB" Type="CLASSIFICATION" IsForeignKey="true" />
+      <Association Name="EDITEUR_OUVRAGE" Member="EDITEUR" ThisKey="NOMED" OtherKey="NOMED" Type="EDITEUR" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.STOCKER" Member="STOCKER">
+    <Type Name="STOCKER">
+      <Column Name="NUMOUVR" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NUMDEP" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="QTESTOCK" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="DEPOT_STOCKER" Member="DEPOT" ThisKey="NUMDEP" OtherKey="NUMDEP" Type="DEPOT" IsForeignKey="true" />
+      <Association Name="OUVRAGE_STOCKER" Member="OUVRAGE" ThisKey="NUMOUVR" OtherKey="NUMOUVR" Type="OUVRAGE" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
